@@ -43,6 +43,8 @@ func main() {
         return
     }
 
+    fmt.Println(fmt.Sprintf("SEXY - Sentry Proxy %s (%s)", version.Version, version.CommitHash))
+
     if *udpAddress == "" {
         fmt.Fprintln(os.Stderr, "No UDP address given to listen to\nRun `sexy -help` to display available arguments")
         os.Exit(1)
@@ -73,7 +75,7 @@ func main() {
 }
 
 func printVersion() {
-    fmt.Println("Sentry Proxy")
+    fmt.Println("SEXY - Sentry Proxy")
     fmt.Println()
     fmt.Println("Version:         ", version.Version)
     fmt.Println("Git Commit Hash: ", version.CommitHash)
