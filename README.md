@@ -7,10 +7,32 @@ Sexy (Sentry Proxy)
 Usage
 -----
 
-In order to run **Sexy** you just need to provide a local UDP address (`-u`) and the base URL of the sentry instance (`-s`).
+In order to run **Sexy** you just need to adjust your config file (`sexy.toml`) and run the binary.
 
 ```bash
-sexy -u localhost:9001 -s https://sentry.example.org
+sexy -c /path/to/sexy.toml
+```
+
+The following parameters need to be configured within the `sexy.toml` configuration:
+
+```
+# The local UDP address to listen on
+udpAddress = "localhost:9001"
+
+# The target Sentry base URL
+sentryUrl = "https://sentry.example.org"
+
+# The amount of workers to send out HTTP(S) requests in parallel
+concurrency = 10
+
+# The amount of Sentry messages to buffer (between receiving via UDP and sending out via HTTP(S))
+buffer = 1000
+
+# The logfile where some information (depending on log level) should be written to. The directory must already exist
+logFile = "/var/log/sexy/sexy.log"
+
+# The log level to be used to write into log file (debug, info, notice, warning, error, critical)
+logLevel = "warning"
 ```
 
 For more information about CLI arguments, run `sexy -help`
@@ -18,17 +40,21 @@ For more information about CLI arguments, run `sexy -help`
 ```bash
 # sexy -help
 Usage of sexy:
-  -b uint
-    	Buffer size for pending requests (default 1000)
-  -c uint
-    	Concurrency level for passing requests to Sentry (default 1)
-  -loglevel string
-    	The log level, any of: DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL (default "WARNING")
-  -s string
-    	Sentry base URL (e.g. https://sentry.example.org)
-  -u string
-    	UDP address to listen on (default "localhost:9001")
+  -c string
+    	Path to config file (default "/etc/sexy/sexy.toml")
   -version
     	Show version information
 ```
 
+
+Contributing
+------------
+
+**Sexy** should only serve its purpose of an UDP proxy for Sentry. But in case you find any bug or think it can be improved in some way,
+please don't hesitate to create an issue or - even better - create a pull request with your proposed solution.
+
+
+License
+-------
+
+This project is released under the terms of the [MIT license] (https://github.com/BattleRattle/sexy/blob/master/LICENSE)
