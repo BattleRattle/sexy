@@ -1,0 +1,11 @@
+[Unit]
+Description=UDP Sentry Proxy written in Go
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/sexy
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+Package: sexy
+Version: PACKAGEVER
+Architecture: amd64
+Maintainer: Norman Soetbeer <norman.soetbeer@gmail.com>
+Vcs-Git: https://github.com/BattleRattle/sexy.git
+Description: UDP Sentry Proxy written in Go
