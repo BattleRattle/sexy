@@ -41,6 +41,7 @@ func (s *Server) Run() {
 
     buf := make([]byte, 2 << 16)
     chUdp := make(chan string, 100)
+    defer close(chUdp)
 
     go s.handleUdp(chUdp, s.MsgChan)
 
