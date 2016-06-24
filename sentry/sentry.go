@@ -53,6 +53,8 @@ func (c *Client) Send(msg Message) (err error) {
 
     httpClient := &http.Client{}
     resp, err := httpClient.Do(req)
+    resp.Body.Close()
+
     if err != nil {
         return err
     }
