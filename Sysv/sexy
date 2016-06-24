@@ -1,0 +1,35 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          sexy
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      1 0 6
+# Short-Description: Sexy is a UDP Proxy for Sentry, written in Go.
+### END INIT INFO
+
+case "$1" in
+start)
+    echo "Starting sexy..."
+    pgrep -f '^.*/sexy$' >/dev/null && echo "sexy is already running" || 
+        start-stop-daemon --quiet --start --background --chuid sexy --exec /usr/local/bin/sexy
+    ;;
+stop)
+    echo "Stopping sexy..."
+    pkill -f '^.*/sexy$'
+    ;;
+restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+status)
+    pgrep -f '^.*/sexy$' >/dev/null && echo "sexy is running" || 
+        (echo "sexy is NOT running" && exit 2)
+    ;;
+*)
+    echo "Usage: /etc/init.d/sexy {start|stop|restart|status}"
+    exit 2
+    ;;
+esac
