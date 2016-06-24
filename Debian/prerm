@@ -1,0 +1,12 @@
+# detect OS version                                                             
+VERSION=`grep VERSION_ID /etc/*release | cut -d '"' -f2`                        
+                                                                                
+if [ "$VERSION" = "8" ]                                                         
+then
+  service sexy stop || true
+fi
+
+if [ "$VERSION" = "7" ]                                                         
+then                                                                            
+  /etc/init.d/sexy stop || true                                                      
+fi
