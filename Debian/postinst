@@ -6,6 +6,9 @@ VERSION=`grep VERSION_ID /etc/*release | cut -d '"' -f2`
 
 if [ "$VERSION" = "8" ]
 then
+  service sexy stop || true
+  sleep 1
+  service sexy start || true
   systemctl daemon-reload
   systemctl enable sexy.service
   deb-systemd-invoke restart sexy
@@ -13,5 +16,8 @@ fi
 
 if [ "$VERSION" = "7" ]
 then
+  /etc/init.d/sexy stop || true
+  sleep 1
+  /etc/init.d/sexy start || true
   update-rc.d sexy defaults || true
 fi
