@@ -4,14 +4,14 @@ chown sexy: -R /var/log/sexy
 # detect OS version
 VERSION=`grep VERSION_ID /etc/*release | cut -d '"' -f2`
 
-if [ $VERSION == 8 ]
+if [ "$VERSION" = "8" ]
 then
   systemctl daemon-reload
   systemctl enable sexy.service
   deb-systemd-invoke restart sexy
 fi
 
-if [ $VERSION == 7 ]
+if [ "$VERSION" = "7" ]
 then
   update-rc.d sexy defaults || true
 fi
