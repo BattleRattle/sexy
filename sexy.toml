@@ -1,4 +1,4 @@
-udpAddress = "localhost:9001"
+udpAddress = "0.0.0.0:9999"
 sentryUrl = "https://sentry.example.org"
 concurrency = 10
 buffer = 1000
