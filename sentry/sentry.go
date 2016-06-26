@@ -8,6 +8,8 @@ import (
     "strings"
 
     "github.com/op/go-logging"
+
+    "github.com/BattleRattle/sexy/version"
 )
 
 var (
@@ -20,9 +22,10 @@ type Message struct {
 }
 
 type Client struct {
-    Protocol string
-    Host     string
-    Logger   *logging.Logger
+    Protocol   string
+    Host       string
+    Logger     *logging.Logger
+    httpClient *http.Client
 }
 
 func NewClient(baseUrl string, logger *logging.Logger) (client *Client, err error) {
@@ -35,7 +38,7 @@ func NewClient(baseUrl string, logger *logging.Logger) (client *Client, err erro
         return nil, errInvalidScheme
     }
 
-    client = &Client{Protocol: parsedUrl.Scheme, Host: parsedUrl.Host, Logger: logger}
+    client = &Client{Protocol: parsedUrl.Scheme, Host: parsedUrl.Host, Logger: logger, httpClient: &http.Client{}}
 
     return
 }
@@ -43,21 +46,21 @@ func NewClient(baseUrl string, logger *logging.Logger) (client *Client, err erro
 func (c *Client) Send(msg Message) (err error) {
     url := fmt.Sprintf("%s://%s/api/store/", c.Protocol, c.Host)
 
-    req, err := http.NewRequest("POST", url, strings.NewReader(msg.Body))
+    req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(msg.Body))
     if err != nil {
         return err
     }
 
     req.Header.Add("X-Sentry-Auth", msg.Header)
     req.Header.Add("Content-Type", "application/octet-stream")
+    req.Header.Add("User-Agent", "Sexy/" + version.Version)
 
-    httpClient := &http.Client{}
-    resp, err := httpClient.Do(req)
-    resp.Body.Close()
-
+    c.Logger.Debug("Sending message to Sentry")
+    resp, err := c.httpClient.Do(req)
     if err != nil {
         return err
     }
+    resp.Body.Close()
 
     if resp.StatusCode == http.StatusOK {
         c.Logger.Debug("Successfully delivered message to Sentry")
