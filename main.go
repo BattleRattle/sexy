@@ -6,12 +6,12 @@ import (
     "os"
     "strings"
 
+    "github.com/BurntSushi/toml"
     "github.com/op/go-logging"
 
     "github.com/BattleRattle/sexy/sentry"
-    "github.com/BattleRattle/sexy/version"
     "github.com/BattleRattle/sexy/udp"
-    "github.com/BurntSushi/toml"
+    "github.com/BattleRattle/sexy/version"
 )
 
 type Config struct {
@@ -27,7 +27,7 @@ var (
     configFile = flag.String("c", "/etc/sexy/sexy.toml", "Path to config file")
     showVersion = flag.Bool("version", false, "Show version information")
 
-    format = logging.MustStringFormatter(`%{time:15:04:05.000} %{level:.4s} %{message}`)
+    format = logging.MustStringFormatter(`%{time:2006-01-02 15:04:05.000} %{level:.4s} %{message}`)
     logger = logging.MustGetLogger("sexy")
 )
 
