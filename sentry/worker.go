@@ -1,6 +1,8 @@
 package sentry
 
-import "github.com/op/go-logging"
+import (
+    "github.com/op/go-logging"
+)
 
 type Worker struct {
     SentryUrl string

@@ -17,11 +17,11 @@ var (
 
 type Server struct {
     Address string
-    MsgChan chan<- sentry.Message
+    MsgChan chan <- sentry.Message
     Logger  *logging.Logger
 }
 
-func NewServer(addr string, msgChan chan<- sentry.Message, logger *logging.Logger) *Server {
+func NewServer(addr string, msgChan chan <- sentry.Message, logger *logging.Logger) *Server {
     return &Server{Address: addr, MsgChan: msgChan, Logger: logger}
 }
 
@@ -59,33 +59,36 @@ func (s *Server) Run() {
 
 // Handle UDP messages
 func (s *Server) handleUdp(udpQueue <- chan string, sentryQueue chan <- sentry.Message) {
-    for {
-        rawMsg := <-udpQueue
+    var rawMsg string
 
-        msg, err := s.parseMessageUdp(rawMsg)
+    for {
+        rawMsg = <-udpQueue
+
+        msg, err := s.parseMessageUdp(&rawMsg)
 
         if err != nil {
             s.Logger.Info(err)
             continue
         }
 
-        sentryQueue <- msg
+        select {
+        case sentryQueue <- *msg:
+        default:
+            s.Logger.Debug("Buffer is full, message will be dropped")
+        }
     }
 }
 
-func (s *Server) parseMessageUdp(rawMsg string) (msg sentry.Message, err error) {
-    if !strings.HasPrefix(rawMsg, "Sentry ") {
-        return msg, errUdpSig
+func (s *Server) parseMessageUdp(rawMsg *string) (*sentry.Message, error) {
+    if !strings.HasPrefix(*rawMsg, "Sentry ") {
+        return nil, errUdpSig
     }
 
-    parts := strings.Split(rawMsg, "\n\n")
+    parts := strings.Split(*rawMsg, "\n\n")
 
     if len(parts) != 2 {
-        return msg, errInvalidMessageFormat
+        return nil, errInvalidMessageFormat
     }
 
-    msg.Header = parts[0]
-    msg.Body = parts[1]
-
-    return
+    return &sentry.Message{Header: parts[0], Body: parts[1]}, nil
 }
