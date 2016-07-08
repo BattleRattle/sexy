@@ -48,7 +48,7 @@ func main() {
         os.Exit(1)
     }
 
-    logWriter, err := log.NewFileWriter(cfg.LogFile, 0660)
+    logWriter, err := log.NewFileWriter(cfg.LogFile, 0644)
     if err != nil {
         fmt.Fprintln(os.Stderr, "Failed to open log file " + cfg.LogFile, err)
         os.Exit(1)
