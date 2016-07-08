@@ -4,11 +4,14 @@ import (
     "flag"
     "fmt"
     "os"
+    "os/signal"
     "strings"
+    "syscall"
 
     "github.com/BurntSushi/toml"
     "github.com/op/go-logging"
 
+    "github.com/BattleRattle/sexy/log"
     "github.com/BattleRattle/sexy/sentry"
     "github.com/BattleRattle/sexy/udp"
     "github.com/BattleRattle/sexy/version"
@@ -45,7 +48,7 @@ func main() {
         os.Exit(1)
     }
 
-    logFile, err := os.OpenFile(cfg.LogFile, os.O_WRONLY | os.O_CREATE | os.O_APPEND, 0660)
+    logWriter, err := log.NewFileWriter(cfg.LogFile, 0660)
     if err != nil {
         fmt.Fprintln(os.Stderr, "Failed to open log file " + cfg.LogFile, err)
         os.Exit(1)
@@ -57,7 +60,7 @@ func main() {
         os.Exit(1)
     }
 
-    logging.SetBackend(logging.NewBackendFormatter(logging.NewLogBackend(logFile, "", 0), format))
+    logging.SetBackend(logging.NewBackendFormatter(logging.NewLogBackend(logWriter, "", 0), format))
     logging.SetLevel(lvl, "sexy")
 
     fmt.Println(fmt.Sprintf("SEXY - Sentry Proxy %s (%s)", version.Version, version.CommitHash))
@@ -82,6 +85,8 @@ func main() {
         os.Exit(1)
     }
 
+    go runSignalHandler(logWriter)
+
     chMsg := make(chan sentry.Message, cfg.Buffer)
     defer close(chMsg)
 
@@ -98,4 +103,20 @@ func printVersion() {
     fmt.Println("Version:         ", version.Version)
     fmt.Println("Git Commit Hash: ", version.CommitHash)
     fmt.Println("Build Time:      ", version.BuildTime)
+}
+
+func runSignalHandler(logWriter *log.FileWriter) {
+    chSig := make(chan os.Signal)
+    defer close(chSig)
+
+    signal.Notify(chSig, syscall.SIGUSR1)
+    logger.Debug("Registered Signal Handler")
+
+    for sig := range chSig {
+        logger.Infof("Received %s", sig)
+
+        if err := logWriter.Reopen(); err != nil {
+            logger.Warningf("Unable to reopen log file: %s", err)
+        }
+    }
 }
