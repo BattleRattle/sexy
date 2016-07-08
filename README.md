@@ -47,6 +47,26 @@ Usage of sexy:
 ```
 
 
+Log Rotation
+------------
+
+If you want to use `logrotated` for managing the log file, this example config might be useful:
+
+```
+/var/log/sexy/sexy.log
+{
+    rotate 1
+    size 20M
+    missingok
+    postrotate
+        /usr/bin/killall -USR1 sexy
+    endscript
+}
+```
+
+Sending the `USR1` signal tells Sexy to reopen the file handle to the log file without restart. No logs will get lost using this method. 
+
+
 Contributing
 ------------
 
