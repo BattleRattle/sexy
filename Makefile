@@ -11,5 +11,11 @@ LDFLAGS += "
 .DEFAULT_GOAL: build
 .PHONY: build
 
-build:
+get-deps:
+	go get -t ./...
+
+build: get-deps
 	go build -ldflags $(LDFLAGS) -o $(BINARY) main.go
+
+test: get-deps
+	go test -v ./...
