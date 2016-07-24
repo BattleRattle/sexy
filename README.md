@@ -1,7 +1,13 @@
-Sexy (Sentry Proxy)
+Sexy (Sentry Proxy) [![Build Status](https://travis-ci.org/BattleRattle/sexy.svg?branch=master)](https://travis-ci.org/BattleRattle/sexy)
 ===================
 
 **Sexy** is a UDP Proxy for [Sentry](https://getsentry.com/), written in Go.
+
+
+Requirements
+------------
+
+- Golang 1.6 (or higher)
 
 
 Usage
@@ -64,7 +70,7 @@ If you want to use `logrotated` for managing the log file, this example config m
 }
 ```
 
-Sending the `USR1` signal tells Sexy to reopen the file handle to the log file without restart. No logs will get lost using this method. 
+Sending the `USR1` signal tells Sexy to reopen the file handle to the log file without restart. No logs will get lost using this method.
 
 
 Contributing
